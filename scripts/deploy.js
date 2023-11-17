@@ -68,11 +68,9 @@ async function saveAddress(contract, name) {
 async function main() {
   console.log("Deploy to chain:");
   console.log(await hre.ethers.provider.getNetwork());
-  const { nft, metadata } = await deployContracts();
-  await copyABI("NFT");
-  await copyABI("Metadata");
-  await saveAddress(nft, "NFT");
-  await saveAddress(metadata, "Metadata");
+  const { ezm } = await deployContracts();
+  await copyABI("EZM");
+  await saveAddress(ezm, "EZM");
 }
 
 main()

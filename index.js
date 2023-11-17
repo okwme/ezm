@@ -1,34 +1,18 @@
 
-const NFTABI = require("./contractMetadata/ABI-sepolia-NFT.json");
-const NFT = require("./contractMetadata/sepolia-NFT.json"); // TODO: replace with mainnet
-const NFTSepolia = require("./contractMetadata/sepolia-NFT.json");
+const EZMABI = require("./contractMetadata/ABI-sepolia-EZM.json");
+const EZM = require("./contractMetadata/sepolia-EZM.json"); // TODO: replace with mainnet
+const EZMSepolia = require("./contractMetadata/sepolia-EZM.json");
 
-const MetadataABI = require("./contractMetadata/ABI-sepolia-Metadata.json");
-const Metadata = require("./contractMetadata/sepolia-Metadata.json"); // TODO: replace with mainnet
-const MetadataSepolia = require("./contractMetadata/sepolia-Metadata.json");
-
-const { merkleAddresses } = require("./merkleAddresses.js");
 
 module.exports = {
-  merkleAddresses,
-  NFT: {
-    abi: NFTABI.abi,
+  EZM: {
+    abi: EZMABI.abi,
     networks: {
-      '1': NFT,
-      'homestead': NFT,
-      'mainnet': NFT,
-      '11155111': NFTSepolia,
-      'sepolia': NFTSepolia,
-    },
-  },
-  Metadata: {
-    abi: MetadataABI.abi,
-    networks: {
-      '1': Metadata,
-      'homestead': Metadata,
-      'mainnet': Metadata,
-      '11155111': MetadataSepolia,
-      'sepolia': MetadataSepolia,
+      '1': EZM,
+      'homestead': EZM,
+      'mainnet': EZM,
+      '11155111': EZMSepolia,
+      'sepolia': EZMSepolia,
     },
   }
 }

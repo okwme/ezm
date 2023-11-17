@@ -1,8 +1,8 @@
 {
-  "name": "nft-contracts",
+  "name": "ezm",
   "version": "1.0.0",
-  "description": "Folia presents NFT Smalley",
-  "license": "CC-BY-NC-4.0",
+  "description": "",
+  "license": "MIT",
   "author": "Billy Rennekamp (@okwme)",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,6 @@
     "@nomiclabs/hardhat-ganache": "*",
     "@nomiclabs/hardhat-waffle": "*",
     "@openzeppelin/contracts": "^4.6.0",
-    "base64-sol": "*",
     "chai": "*",
     "dotenv": "^16.0.1",
     "erc721a": "^4.2.3",

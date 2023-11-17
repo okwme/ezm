@@ -4,10 +4,6 @@ const hre = require("hardhat");
 const path = require("node:path");
 const fs = require("fs").promises;
 
-const correctPrice = ethers.utils.parseEther("0.055555555555555555");
-const splitterAddress = '0x69Bff8f9292e3D2b436A66D9F2226986aB16ABCF'
-const maxSupply = 128;
-
 const testJson = (tJson) => {
   try {
     JSON.parse(tJson);
@@ -51,15 +47,11 @@ const getPathAddress = async (name) => {
 const initContracts = async () => {
   const [owner] = await hre.ethers.getSigners();
 
-  const addressNFT = JSON.parse(await readData(await getPathAddress("NFT")))["address"];
-  const ABINFT = JSON.parse(await readData(await getPathABI("NFT")))["abi"];
-  let nft = new ethers.Contract(addressNFT, ABINFT, owner);
+  const addressEZM = JSON.parse(await readData(await getPathAddress("EZM")))["address"];
+  const ABIEZM = JSON.parse(await readData(await getPathABI("EZM")))["abi"];
+  let ezm = new ethers.Contract(addressEZM, ABIEZM, owner);
 
-  const addressMetadata = JSON.parse(await readData(await getPathAddress("Metadata")))["address"];
-  const ABIMetadata = JSON.parse(await readData(await getPathABI("Metadata")))["abi"];
-  let metadata = new ethers.Contract(addressMetadata, ABIMetadata, owner);
-
-  return { nft, metadata };
+  return { ezm };
 };
 
 
@@ -80,62 +72,33 @@ const deployContracts = async () => {
   const [owner] = await hre.ethers.getSigners();
   console.log({ deployer: owner.address })
 
-  // deploy Metadata
-  const Metadata = await hre.ethers.getContractFactory("Metadata");
-  const metadata = await Metadata.deploy();
-  await metadata.deployed();
-  var metadataAddress = metadata.address;
-  log("Metadata Deployed at " + String(metadataAddress));
-
-  // deploy NFT
-  const NFT = await ethers.getContractFactory("NFT");
-  const nft = await NFT.deploy(metadataAddress, splitterAddress);
-  await nft.deployed();
-  var nftAddress = nft.address;
-  log("NFT Deployed at " + String(nftAddress) + ` with metadata ${metadataAddress} and splitter ${splitterAddress}`);
-
-  let reEntry
-  // deploy reEntry contract for testing
-  if (networkinfo["chainId"] == 12345) {
-    const ReEntry = await ethers.getContractFactory("ReEntry");
-    reEntry = await ReEntry.deploy(nftAddress);
-    await reEntry.deployed();
-    // var reEntryAddress = reEntry.address;
-  }
+  // deploy EZM
+  const EZM = await hre.ethers.getContractFactory("EZM");
+  const ezm = await EZM.deploy("0x0000000000000000000000000000000000000000000000000000000000000000");
+  await ezm.deployed();
+  var ezmAddress = ezm.address;
+  log("EZM Deployed at " + String(ezmAddress));
 
 
   // verify contract if network ID is goerli or sepolia
   if (networkinfo["chainId"] == 5 || networkinfo["chainId"] == 1 || networkinfo["chainId"] == 11155111) {
     if (blocksToWaitBeforeVerify > 0) {
       log(`Waiting for ${blocksToWaitBeforeVerify} blocks before verifying`)
-      await nft.deployTransaction.wait(blocksToWaitBeforeVerify);
+      await ezm.deployTransaction.wait(blocksToWaitBeforeVerify);
     }
 
-    log("Verifying Metadata Contract");
+    log("Verifying EZM Contract");
     try {
       await hre.run("verify:verify", {
-        address: metadataAddress,
+        address: ezmAddress,
         constructorArguments: [],
       });
     } catch (e) {
       log({ e })
     }
-
-    // log(`Waiting for ${blocksToWaitBeforeVerify} blocks before verifying`)
-    await nft.deployTransaction.wait(blocksToWaitBeforeVerify);
-    log("Verifying NFT Contract");
-    try {
-      await hre.run("verify:verify", {
-        address: nftAddress,
-        constructorArguments: [metadataAddress, splitterAddress],
-      });
-    } catch (e) {
-      log({ e })
-    }
-
   }
 
-  return { nft, metadata, reEntry };
+  return { ezm };
 };
 
 const log = (message) => {
@@ -150,8 +113,5 @@ module.exports = {
   getPathABI,
   getPathAddress,
   readData,
-  testJson,
-  correctPrice,
-  maxSupply,
-  splitterAddress
+  testJson
 };
